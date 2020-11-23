@@ -1,51 +1,64 @@
-const express = require('express');
-const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+const express = require("express");
+const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
-const { runCypress } = require("./cypress")
+const { Bug } = require("./models/bug");
+const { runCypress } = require("./cypress");
 
 const app = express();
 const port = 8081;
 
-const TEST_LOCATION = "./cypress/integration";
 const VIDEO_LOCATION = "./videos";
 
-app.use(express.json());
-app.use('/videos', express.static('videos'));
-app.use(cors());
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+// Setup Mongo
+var mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost/BugTracker", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
 
-app.post('/bug', (req, res) => {
-  const fileName = `temp_${+new Date()}.spec.js`;
-  const filePath = path.join(TEST_LOCATION, fileName);
+app.use(express.json());
+app.use("/videos", express.static("videos"));
+app.use(cors());
 
-  fs.writeFileSync(filePath, req.body.test);
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
-  runCypress(fileName)
-    .then((results) => {
-      // Get run data
-      const runData = results.runs[0];
+app.get("/bugs", async (req, res) => {
+  res.json(await Bug.find({}, ["_id", "name"]));
+})
 
-      fs.writeFileSync('./file.json', JSON.stringify(results, null, 2))
+app.post("/bugs", async (req, res) => {
+  let results;
 
-      // Move video
-      const videoName = path.basename(runData.video);
+  try {
+    results = await runCypress(req.body.test);
+  } catch (err) {
+    console.log("ERROR")
+  }
 
-      fs.renameSync(runData.video, path.join(VIDEO_LOCATION, videoName));
+  const runData = results.runs[0];
 
+  // Move video
+  const videoName = path.basename(runData.video);
+
+  fs.renameSync(runData.video, path.join(VIDEO_LOCATION, videoName));
+
+  const bug = new Bug({
+    name: req.body.name,
+    description: req.body.description,
+    test: req.body.test,
+    video: videoName
+  })
+
+  bug.save()
+    .then(() => {
+      console.log("BUG SAVED")
       res.json({
         video: `/videos/${videoName}`
       });
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-    .finally(() => {
-      fs.unlinkSync(filePath);
     })
 });
 

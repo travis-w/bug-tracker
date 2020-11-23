@@ -15,7 +15,7 @@
       <div class="loader" v-if="loading"/>
       <span v-else>Submit</span>
     </button>
-    <video v-if="video" autoplay :src="video"></video>
+    <video v-if="video" :src="video" autoplay controls></video>
   </div>
 </template>
 
@@ -35,7 +35,7 @@ export default {
 
     const submitForm = () => {
       loading.value = true;
-      ky.post("http://localhost:8081/bug", {
+      ky.post("http://localhost:8081/bugs", {
           json: {
             name: name.value,
             description: description.value,

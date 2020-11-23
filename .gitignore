@@ -25,3 +25,8 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Server Generated Files
+/server/videos
+/server/cypress/screenshots
+/server/cypress/videos

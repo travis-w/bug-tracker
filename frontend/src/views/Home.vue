@@ -1,18 +1,72 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div>
+    <label>Bug Name</label>
+    <input type="text" v-model="name" />
+    <label>Bug Description</label>
+    <textarea v-model="description" />
+    <label>Test</label>
+    <textarea class="h-52" v-model="test" />
+    <button 
+      type="button"
+      class="bg-blue-600 p-2 rounded-md text-white mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      :disabled="submitDisabled"
+      @click="submitForm"
+    >
+      <div class="loader" v-if="loading"/>
+      <span v-else>Submit</span>
+    </button>
+    <video v-if="video" autoplay :src="video"></video>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import { ref, computed } from "vue";
+import ky from "ky";
 
-export default defineComponent({
-  name: "Home",
-  components: {
-    HelloWorld
-  }
-});
+export default {
+  setup(props: any) {
+    const name = ref("");
+    const description = ref("");
+    const test = ref("");
+    const loading = ref(false);
+    const video = ref("");
+
+    const submitDisabled = computed(() => name.value === "" || description.value === "" || test.value === "");
+
+    const submitForm = () => {
+      loading.value = true;
+      ky.post("http://localhost:8081/bug", {
+          json: {
+            name: name.value,
+            description: description.value,
+            test: test.value
+          },
+          timeout: 60000
+        })
+        .then((data: any) => {
+          return data.json();
+        })
+        .then((res) => {
+          video.value = `http://localhost:8081${res.video}`;
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          loading.value = false;
+        })
+    }
+
+    return {
+      name,
+      description,
+      test,
+      video,
+      loading,
+      submitDisabled,
+      submitForm
+    };
+  }  
+}
+
 </script>

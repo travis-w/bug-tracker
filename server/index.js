@@ -31,13 +31,7 @@ app.get("/bugs", async (req, res) => {
 })
 
 app.post("/bugs", async (req, res) => {
-  let results;
-
-  try {
-    results = await runCypress(req.body.test);
-  } catch (err) {
-    console.log("ERROR")
-  }
+  const results = await runCypress(req.body.test);
 
   const runData = results.runs[0];
 
@@ -55,7 +49,6 @@ app.post("/bugs", async (req, res) => {
 
   bug.save()
     .then(() => {
-      console.log("BUG SAVED")
       res.json({
         video: `/videos/${videoName}`
       });

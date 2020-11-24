@@ -5,7 +5,9 @@
     <label>Bug Description</label>
     <textarea v-model="description" />
     <label>Test</label>
-    <textarea class="h-52" v-model="test" />
+    <div class="border rounded-sm shadow-sm">
+      <Editor class="h-52" v-model="test" />
+    </div>
     <button 
       type="button"
       class="bg-blue-600 p-2 rounded-md text-white mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -23,7 +25,10 @@
 import { ref, computed } from "vue";
 import ky from "ky";
 
+import Editor from "@/components/Editor.vue";
+
 export default {
+  components: { Editor },
   setup(props: any) {
     const name = ref("");
     const description = ref("");

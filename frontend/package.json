@@ -11,6 +11,8 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "ky": "^0.25.0",
+    "monaco-editor": "^0.21.2",
+    "monaco-editor-webpack-plugin": "^2.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.1",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",

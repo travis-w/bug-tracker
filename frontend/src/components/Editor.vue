@@ -4,11 +4,9 @@
 
 <script>
 import { ref, toRefs, onMounted, watch } from "vue";
-import { defineComponent } from "vue";
 import * as monaco from 'monaco-editor';
 
 // TODO: Set up monaco to auto complete some cypress commands:
-
 export default {
   props: {
     modelValue: {

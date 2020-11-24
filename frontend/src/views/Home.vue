@@ -29,7 +29,7 @@ import Editor from "@/components/Editor.vue";
 
 export default {
   components: { Editor },
-  setup(props: any) {
+  setup() {
     const name = ref("");
     const description = ref("");
     const test = ref("");
@@ -48,7 +48,7 @@ export default {
           },
           timeout: 60000
         })
-        .then((data: any) => {
+        .then((data) => {
           return data.json();
         })
         .then((res) => {

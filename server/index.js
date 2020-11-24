@@ -18,9 +18,11 @@ mongoose.connect("mongodb://localhost/BugTracker", {
   useUnifiedTopology: true
 });
 
-app.use(express.json());
-app.use("/videos", express.static("videos"));
 app.use(cors());
+app.use(express.json());
+app.set('json spaces', 2)
+
+app.use("/videos", express.static("videos"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -54,6 +56,21 @@ app.post("/bugs", async (req, res) => {
       });
     })
 });
+
+app.get("/bugs/:id", async (req, res) => {
+  const result = await Bug.findById(req.params.id)
+  
+  if (result) {
+    res.json(result);
+  } else {
+    res.status(404).json({ error: "No results found" })
+  }
+})
+
+app.post("/bugs/:id/test", (req, res) => {
+  // Run test for 
+  res.json({ temp: "Starting Test" })
+})
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

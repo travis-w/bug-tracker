@@ -4,7 +4,7 @@
 
 <script>
 import { ref, toRefs, onMounted, watch } from "vue";
-import * as monaco from 'monaco-editor';
+import * as monaco from "monaco-editor";
 
 // TODO: Set up monaco to auto complete some cypress commands:
 export default {
@@ -12,7 +12,7 @@ export default {
     modelValue: {
       type: String,
       default: ""
-    },
+    }
   },
   setup(props, { emit }) {
     const { modelValue } = toRefs(props);
@@ -21,18 +21,18 @@ export default {
     let _editor;
 
     // Watch value prop
-    watch(modelValue, (newVal) => {
+    watch(modelValue, newVal => {
       if (newVal !== bindedValue.value) {
         _editor.getModel().setValue(newVal);
       }
-    })
+    });
 
     // Watch binded val
-    watch(bindedValue, (newVal) => {
+    watch(bindedValue, newVal => {
       if (newVal !== modelValue.value) {
-        emit("update:modelValue", newVal)
+        emit("update:modelValue", newVal);
       }
-    })
+    });
 
     onMounted(() => {
       // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.istandaloneeditorconstructionoptions.html
@@ -46,12 +46,12 @@ export default {
 
       _editor.onDidChangeModelContent(() => {
         bindedValue.value = _editor.getValue();
-      })
-    })
+      });
+    });
 
     return {
       elem
-    }
+    };
   }
-}
+};
 </script>

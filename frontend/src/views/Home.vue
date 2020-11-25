@@ -1,6 +1,16 @@
 <template>
   <div class="about">
-    {{ bugs }}
+    <ul>
+      <router-link
+        v-for="bug in bugs"
+        :key="bug._id"
+        :to="{ name: 'ViewBug', params: { bugId: bug._id } }"
+      >
+        <li class="bug_item">
+          {{ bug.name }}
+        </li>
+      </router-link>
+    </ul>
   </div>
 </template>
 
@@ -32,3 +42,19 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.bug_item {
+  @apply border relative p-3;
+
+  &::after {
+    @apply bg-green-500 absolute -left-1 inset-y-0;
+    content: " ";
+    width: 8px;
+  }
+
+  & + & {
+    border-top: 0;
+  }
+}
+</style>

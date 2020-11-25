@@ -58,12 +58,13 @@ app.post("/bugs", async (req, res) => {
 });
 
 app.get("/bugs/:id", async (req, res) => {
-  const result = await Bug.findById(req.params.id)
+  const validId = mongoose.Types.ObjectId.isValid(req.params.id);
+  const result = validId ? await Bug.findById(req.params.id) : null;
   
   if (result) {
     res.json(result);
   } else {
-    res.status(404).json({ error: "No results found" })
+    res.status(404).json({ error: "No results found" });
   }
 })
 

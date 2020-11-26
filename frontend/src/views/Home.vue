@@ -49,7 +49,7 @@ export default {
   @apply border relative p-3 block;
 
   &::after {
-    @apply bg-green-500 absolute inset-y-0;
+    @apply bg-red-500 absolute inset-y-0;
     content: " ";
     width: 8px;
     left: -1px;

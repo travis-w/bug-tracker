@@ -21,8 +21,16 @@ const runCypress = (testContent) => {
       quiet: true
     })
     .then((results) => {
-      // TODO: Parse results and condense
-      resolve(results)
+      fs.writeFileSync("file.json", JSON.stringify(results, null, 2));
+      const run = results.runs[0];
+
+      resolve({
+        passed: results.totalFailed === 0,
+        tests: run.tests,
+        video: run.video,
+        stats: results.stats,
+        error: run.error
+      })
     })
     .catch((err) => {
       reject(err)

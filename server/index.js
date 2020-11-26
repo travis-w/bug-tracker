@@ -35,26 +35,43 @@ app.get("/bugs", async (req, res) => {
 app.post("/bugs", async (req, res) => {
   const results = await runCypress(req.body.test);
 
-  const runData = results.runs[0];
+  // Error with test run
+  if (results.error) {
+    return res.status(400).json({
+      error: results.error
+    });
+  }
+
+  // Don't save  bug if test passes (submit only)
+  if(results.passed && !req.body.preview) {
+    return res.status(400).json({
+      error: "Test passed. Invalid bug" 
+    });
+  }
 
   // Move video
-  const videoName = path.basename(runData.video);
+  const videoName = path.basename(results.video);
 
-  fs.renameSync(runData.video, path.join(VIDEO_LOCATION, videoName));
+  fs.renameSync(results.video, path.join(VIDEO_LOCATION, videoName));
 
   const bug = new Bug({
     name: req.body.name,
     description: req.body.description,
     test: req.body.test,
     video: videoName
-  })
+  });
 
-  bug.save()
-    .then(() => {
-      res.json({
-        video: `/videos/${videoName}`
-      });
+  if (!req.body.preview) {
+    await bug.save();
+
+    return res.json({
+      bugId: bug._id
     })
+  }
+
+  res.json({
+    video: `/videos/${videoName}`
+  });
 });
 
 app.get("/bugs/:id", async (req, res) => {

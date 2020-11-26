@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/bugs", async (req, res) => {
-  res.json(await Bug.find({}, ["_id", "name"]));
+  res.json(await Bug.find({}, ["_id", "name", "status", "date"], {sort: '-date'}));
 })
 
 app.post("/bugs", async (req, res) => {
@@ -67,6 +67,17 @@ app.get("/bugs/:id", async (req, res) => {
     res.status(404).json({ error: "No results found" });
   }
 })
+
+app.delete("/bugs/:id", async (req, res) => {
+  const validId = mongoose.Types.ObjectId.isValid(req.params.id);
+  const result = validId ? await Bug.findOneAndDelete({ _id: req.params.id }) : null;
+
+  if (result) {
+    res.json(result);
+  } else {
+    res.status(404).json({ error: "No results found" });
+  }
+});
 
 app.post("/bugs/:id/test", (req, res) => {
   // Run test for 

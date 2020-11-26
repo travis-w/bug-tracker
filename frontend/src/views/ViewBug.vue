@@ -1,6 +1,8 @@
 <template>
   <div>
     <h1>{{ bug.name }}</h1>
+    <Editor class="h-52" v-model="bug.test" :read-only="true" />
+    <video :src="`http://localhost:8081/videos/${bug.video}`" controls></video>
   </div>
 </template>
 
@@ -9,9 +11,12 @@ import ky from "ky";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
+import Editor from "@/components/Editor";
+
 const BASE_URL = process.env.VUE_APP_API_BASE;
 
 export default {
+  components: { Editor },
   setup() {
     const route = useRoute();
     const bug = ref({});

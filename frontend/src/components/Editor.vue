@@ -12,10 +12,14 @@ export default {
     modelValue: {
       type: String,
       default: ""
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit }) {
-    const { modelValue } = toRefs(props);
+    const { modelValue, readOnly } = toRefs(props);
     const elem = ref(null);
     const bindedValue = ref(modelValue.value);
     let _editor;
@@ -41,7 +45,9 @@ export default {
         language: "javascript",
         minimap: { enabled: false },
         contextmenu: false,
-        tabSize: 2
+        tabSize: 2,
+        readOnly: readOnly.value,
+        scrollBeyondLastLine: !readOnly.value
       });
 
       _editor.onDidChangeModelContent(() => {

@@ -3,10 +3,11 @@
     <ul>
       <router-link
         v-for="bug in bugs"
+        class="bug_item"
         :key="bug._id"
         :to="{ name: 'ViewBug', params: { bugId: bug._id } }"
       >
-        <li class="bug_item">
+        <li>
           {{ bug.name }}
         </li>
       </router-link>
@@ -45,12 +46,13 @@ export default {
 
 <style lang="scss">
 .bug_item {
-  @apply border relative p-3;
+  @apply border relative p-3 block;
 
   &::after {
-    @apply bg-green-500 absolute -left-1 inset-y-0;
+    @apply bg-green-500 absolute inset-y-0;
     content: " ";
     width: 8px;
+    left: -1px;
   }
 
   & + & {

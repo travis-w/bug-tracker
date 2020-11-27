@@ -3,6 +3,7 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 
+const util = require("./util");
 const { Bug } = require("./models/bug");
 const { runCypress } = require("./cypress");
 
@@ -63,30 +64,17 @@ app.post("/bugs", async (req, res) => {
   if (!req.body.preview) {
     const saved = await bug.save();
 
-    // Set up artifacts directories
-    fs.mkdirSync(
-      path.join(
-        ARTIFACT_LOCATION, 
-        saved._id.toString(), 
-        saved.testResults[0]._id.toString()
-      ), 
-      { recursive: true }
-    );
-
-    // Save to 
-    fs.renameSync(
-      results.video, 
-      path.join(
-        ARTIFACT_LOCATION,
-        saved._id.toString(),
-        saved.testResults[0]._id.toString(),
-        "run.mp4"
-      )
+    util.saveTestArtifact(
+      results.video,
+      "run.mp4",
+      "video",
+      saved._id.toString(),
+      saved.testResults[0]._id.toString()
     );
 
     return res.json({
       bugId: bug._id
-    })
+    });
   }
 
   // TODO: Figure out way to dispose of video after retrieved
@@ -106,7 +94,7 @@ app.get("/bugs/:id", async (req, res) => {
   } else {
     res.status(404).json({ error: "No results found" });
   }
-})
+});
 
 app.delete("/bugs/:id", async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
@@ -138,30 +126,19 @@ app.post("/bugs/:id/test", async (req, res) => {
     const saved = await result.save();
 
     // Save Artifacts
-    fs.mkdirSync(
-      path.join(
-        ARTIFACT_LOCATION, 
-        saved._id.toString(), 
-        saved.testResults[0]._id.toString()
-      ), 
-      { recursive: true }
-    );
-
-    fs.renameSync(
-      testResults.video, 
-      path.join(
-        ARTIFACT_LOCATION,
-        saved._id.toString(),
-        saved.testResults[0]._id.toString(),
-        "run.mp4"
-      )
+    util.saveTestArtifact(
+      testResults.video,
+      "run.mp4",
+      "video",
+      saved._id.toString(),
+      saved.testResults[0]._id.toString()
     );
 
     res.json(testResults);
   } else {
     res.status(404).json({ error: "No results found" });
   }
-})
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

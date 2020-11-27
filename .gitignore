@@ -30,3 +30,4 @@ pnpm-debug.log*
 /server/videos
 /server/cypress/screenshots
 /server/cypress/videos
+/server/test_artifacts

@@ -1,11 +1,20 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-var BugSchema = new mongoose.Schema({
+const TestResultSchema = new mongoose.Schema({
+  date: { type: Date, default: Date.now },
+  passed: Boolean,
+  // TODO: Define tests schema beyond `Array`
+  tests: Array,
+  video: Array,
+  error: Array
+});
+
+const BugSchema = new mongoose.Schema({
   name: String,
   date: { type: Date, default: Date.now },
   description: String,
   test: String,
-  video: String,
+  testResults: [TestResultSchema],
   status: {
     type: String,
     default: "Open",
@@ -13,7 +22,7 @@ var BugSchema = new mongoose.Schema({
   }
 });
 
-var Bug = mongoose.model('Bug', BugSchema);
+const Bug = mongoose.model('Bug', BugSchema);
 
 module.exports = {
   Bug: Bug

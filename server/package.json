@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js --ignore cypress/ --ignore videos/"
+    "dev": "nodemon index.js --config nodemon.json"
   },
   "author": "",
   "license": "ISC",

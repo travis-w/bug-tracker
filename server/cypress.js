@@ -21,7 +21,6 @@ const runCypress = (testContent) => {
       quiet: true
     })
     .then((results) => {
-      fs.writeFileSync("file.json", JSON.stringify(results, null, 2));
       const run = results.runs[0];
 
       resolve({

@@ -1,8 +1,9 @@
 <template>
   <div>
     <h1>{{ bug.name }}</h1>
+    <button>Delete</button>
     <Editor class="h-52" v-model="bug.test" :read-only="true" />
-    <video :src="`http://localhost:8081/videos/${bug.video}`" controls></video>
+    <video :src="`http://localhost:8081/videos/${bug._id}/${bug.testResults?.[0]._id}/run.mp4`" controls></video>
   </div>
 </template>
 

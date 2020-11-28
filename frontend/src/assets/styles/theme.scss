@@ -10,6 +10,11 @@ label {
   @apply text-gray-700 text-lg font-semibold block;
 }
 
+.page-title {
+  @apply text-5xl font-bold;
+}
+
+/* ----- Loader Styles ----- */
 .loader,
 .loader:after {
   border-radius: 50%;

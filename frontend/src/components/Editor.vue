@@ -11,12 +11,12 @@ export default {
   props: {
     modelValue: {
       type: String,
-      default: ""
+      default: "",
     },
     readOnly: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { modelValue, readOnly } = toRefs(props);
@@ -25,14 +25,14 @@ export default {
     let _editor;
 
     // Watch value prop
-    watch(modelValue, newVal => {
+    watch(modelValue, (newVal) => {
       if (newVal !== bindedValue.value) {
         _editor.getModel().setValue(newVal);
       }
     });
 
     // Watch binded val
-    watch(bindedValue, newVal => {
+    watch(bindedValue, (newVal) => {
       if (newVal !== modelValue.value) {
         emit("update:modelValue", newVal);
       }
@@ -47,7 +47,7 @@ export default {
         contextmenu: false,
         tabSize: 2,
         readOnly: readOnly.value,
-        scrollBeyondLastLine: !readOnly.value
+        scrollBeyondLastLine: !readOnly.value,
       });
 
       _editor.onDidChangeModelContent(() => {
@@ -56,8 +56,8 @@ export default {
     });
 
     return {
-      elem
+      elem,
     };
-  }
+  },
 };
 </script>

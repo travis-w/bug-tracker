@@ -1,12 +1,7 @@
 <template>
   <div v-if="bug">
     <h1 class="page-title">{{ bug.name }}</h1>
-    <video
-      v-if="video"
-      class="m-auto max-w-4xl"
-      :src="video"
-      controls
-    />
+    <video v-if="video" class="m-auto max-w-4xl" :src="video" controls />
 
     <div class="tab">
       <div class="tab__buttons">
@@ -15,9 +10,7 @@
         <button @click="activeTab = 2">Test Source</button>
       </div>
       <div class="tab__content">
-        <div v-if="activeTab === 0">
-          Info Tab
-        </div>
+        <div v-if="activeTab === 0">Info Tab</div>
         <div v-if="activeTab === 1">
           <TestRun
             v-for="testResult in bug.testResults"
@@ -53,8 +46,8 @@ export default {
 
     // TODO: Look into asyc setup/vue suspense
     ky.get(`${BASE_URL}/bugs/${route.params.bugId}`)
-      .then(data => data.json())
-      .then(res => {
+      .then((data) => data.json())
+      .then((res) => {
         bug.value = { ...res };
         video.value = `http://localhost:8081/videos/${bug.value._id}/${bug.value.testResults?.[0]._id}/run.mp4`;
       });
@@ -62,22 +55,22 @@ export default {
     return {
       bug,
       video,
-      activeTab
+      activeTab,
     };
-  }
+  },
 };
 </script>
 
 <style lang="scss">
 .tab__buttons {
   @apply mb-2;
-  
+
   button {
     @apply p-2;
   }
 
   button + button {
-    @apply border-l;  
+    @apply border-l;
   }
 }
 </style>

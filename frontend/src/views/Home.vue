@@ -25,22 +25,22 @@ export default {
   setup() {
     const bugs = ref([]);
 
-    const setBugs = val => {
+    const setBugs = (val) => {
       bugs.value = [...val];
     };
 
     return {
       bugs,
-      setBugs
+      setBugs,
     };
   },
   beforeRouteEnter: async (to, from, next) => {
     const results = await ky.get(`${BASE_URL}/bugs`).json();
 
-    next(vm => {
+    next((vm) => {
       vm.setBugs(results);
     });
-  }
+  },
 };
 </script>
 

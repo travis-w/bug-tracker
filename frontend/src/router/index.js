@@ -5,13 +5,13 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home
+    component: Home,
   },
   {
     path: "/bugs/:bugId",
     name: "ViewBug",
     component: () =>
-      import(/* webpackChunkName: "viewBug" */ "../views/ViewBug")
+      import(/* webpackChunkName: "viewBug" */ "../views/ViewBug"),
   },
   {
     path: "/create",
@@ -19,13 +19,13 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (create.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "create" */ "../views/Create")
-  }
+    component: () => import(/* webpackChunkName: "create" */ "../views/Create"),
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
 });
 
 export default router;

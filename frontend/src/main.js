@@ -6,7 +6,4 @@ import store from "./store";
 import "@/assets/styles/tailwind.scss";
 import "@/assets/styles/theme.scss";
 
-createApp(App)
-  .use(store)
-  .use(router)
-  .mount("#app");
+createApp(App).use(store).use(router).mount("#app");

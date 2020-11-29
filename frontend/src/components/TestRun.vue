@@ -14,28 +14,33 @@ export default {
   props: {
     testObj: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const { testObj } = toRefs(props);
 
-    const passedTests = testObj.value.tests.filter(x => { console.log(x); return x.state === "passed"}).length;
+    const passedTests = testObj.value.tests.filter((x) => {
+      console.log(x);
+      return x.state === "passed";
+    }).length;
 
     const formatDate = (date) => {
       return DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_FULL);
     };
 
     const testHeader = computed(() => {
-      return `${formatDate(testObj.value.date)} (${passedTests} / ${testObj.value.tests.length})`;
+      return `${formatDate(testObj.value.date)} (${passedTests} / ${
+        testObj.value.tests.length
+      })`;
     });
 
     return {
       passedTests,
-      testHeader
+      testHeader,
     };
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
@@ -44,7 +49,7 @@ export default {
 
   &::after {
     @apply bg-red-500 absolute inset-y-0;
-    content: ' ';
+    content: " ";
     content: " ";
     width: 8px;
     left: -1px;
@@ -55,7 +60,7 @@ export default {
   }
 
   & + & {
-   @apply border-t-0; 
+    @apply border-t-0;
   }
 }
 </style>

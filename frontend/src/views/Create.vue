@@ -57,16 +57,18 @@ export default {
     const previewDisabled = computed(() => test.value === "");
 
     const apiCall = async (preview = false) => {
-      return await ky.post(`${BASE_URL}/bugs`, {
-        json: {
-          name: name.value,
-          description: description.value,
-          test: test.value,
-          preview: preview
-        },
-        timeout: 60000
-      }).json();
-    }
+      return await ky
+        .post(`${BASE_URL}/bugs`, {
+          json: {
+            name: name.value,
+            description: description.value,
+            test: test.value,
+            preview: preview,
+          },
+          timeout: 60000,
+        })
+        .json();
+    };
 
     const submitBug = async () => {
       loading.value = true;
@@ -75,11 +77,11 @@ export default {
         const results = await apiCall();
 
         // TODO: Delay redirect
-        router.push({ name: "ViewBug", params: { bugId: results.bugId }});
+        router.push({ name: "ViewBug", params: { bugId: results.bugId } });
       } catch (err) {
         console.log("ERROR HANDLING");
       }
-      
+
       loading.value = false;
     };
 
@@ -93,9 +95,9 @@ export default {
       } catch (err) {
         console.log("ERROR HANDLING");
       }
-      
+
       previewLoading.value = false;
-    }
+    };
 
     return {
       name,
@@ -107,8 +109,8 @@ export default {
       submitBug,
       previewLoading,
       previewDisabled,
-      previewBug
+      previewBug,
     };
-  }
+  },
 };
 </script>

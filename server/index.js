@@ -134,6 +134,19 @@ app.post("/bugs/:id/test", async (req, res) => {
       saved.testResults[0]._id.toString()
     );
 
+    // TODO: Currenlty gets all screenshots. Need to save and decide how to store in database
+    const screenshots = testResults.tests.reduce((acc, cur) => {
+      return [
+        ...acc,
+        ...cur.attempts.reduce((acc2, cur2) => {
+          return [
+            ...acc2,
+            ...cur2.screenshots
+          ]
+        }, [])
+      ];
+    }, []);
+
     res.json(testResults);
   } else {
     res.status(404).json({ error: "No results found" });

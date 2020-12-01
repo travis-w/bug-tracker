@@ -52,11 +52,10 @@ export default {
     const activeTab = ref(0);
 
     // TODO: Look into asyc setup/vue suspense
-    getBugById(route.params.bugId)
-      .then((res) => {
-        bug.value = { ...res };
-        video.value = `${BASE_URL}/videos/${bug.value._id}/${bug.value.testResults?.[0]._id}/run.mp4`;
-      });
+    getBugById(route.params.bugId).then((res) => {
+      bug.value = { ...res };
+      video.value = `${BASE_URL}/videos/${bug.value._id}/${bug.value.testResults?.[0]._id}/run.mp4`;
+    });
 
     const deleteBug = async () => {
       await deleteBugById(bug.value._id);
@@ -68,14 +67,14 @@ export default {
       const results = await retestBugById(bug.value._id);
 
       console.log(results);
-    }
+    };
 
     return {
       bug,
       video,
       activeTab,
       deleteBug,
-      retestBug
+      retestBug,
     };
   },
 };

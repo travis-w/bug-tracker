@@ -27,12 +27,12 @@
 </template>
 
 <script>
-import ky from "ky";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
 import Editor from "@/components/Editor";
 import TestRun from "@/components/TestRun";
+import { getBugById } from "@/api/bugs";
 
 const BASE_URL = process.env.VUE_APP_API_BASE;
 
@@ -45,11 +45,10 @@ export default {
     const activeTab = ref(0);
 
     // TODO: Look into asyc setup/vue suspense
-    ky.get(`${BASE_URL}/bugs/${route.params.bugId}`)
-      .then((data) => data.json())
+    getBugById(route.params.bugId)
       .then((res) => {
         bug.value = { ...res };
-        video.value = `http://localhost:8081/videos/${bug.value._id}/${bug.value.testResults?.[0]._id}/run.mp4`;
+        video.value = `${BASE_URL}/videos/${bug.value._id}/${bug.value.testResults?.[0]._id}/run.mp4`;
       });
 
     return {

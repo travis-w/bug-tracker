@@ -21,7 +21,6 @@ export default {
     const { testObj } = toRefs(props);
 
     const passedTests = testObj.value.tests.filter((x) => {
-      console.log(x);
       return x.state === "passed";
     }).length;
 

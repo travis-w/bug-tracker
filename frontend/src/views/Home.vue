@@ -16,10 +16,9 @@
 </template>
 
 <script>
-import ky from "ky";
 import { ref } from "vue";
 
-const BASE_URL = process.env.VUE_APP_API_BASE;
+import { getAllBugs } from "@/api/bugs";
 
 export default {
   setup() {
@@ -35,7 +34,7 @@ export default {
     };
   },
   beforeRouteEnter: async (to, from, next) => {
-    const results = await ky.get(`${BASE_URL}/bugs`).json();
+    const results = await getAllBugs();
 
     next((vm) => {
       vm.setBugs(results);

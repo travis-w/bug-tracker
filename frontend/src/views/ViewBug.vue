@@ -8,6 +8,7 @@
         <button @click="activeTab = 0">Info</button>
         <button @click="activeTab = 1">Test History</button>
         <button @click="activeTab = 2">Test Source</button>
+        <button @click="activeTab = 3">Other</button>
       </div>
       <div class="tab__content">
         <div v-if="activeTab === 0">Info Tab</div>
@@ -21,6 +22,11 @@
         <div v-else-if="activeTab === 2">
           <Editor class="h-52" v-model="bug.test" :read-only="true" />
         </div>
+        <div v-else-if="activeTab === 3">
+          <!-- Trash tab to throw stuff in now for functionality -->
+          <button @click="deleteBug">Delete</button>
+          <button @click="retestBug">Retest</button>
+        </div>
       </div>
     </div>
   </div>
@@ -28,17 +34,18 @@
 
 <script>
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import Editor from "@/components/Editor";
 import TestRun from "@/components/TestRun";
-import { getBugById } from "@/api/bugs";
+import { getBugById, deleteBugById, retestBugById } from "@/api/bugs";
 
 const BASE_URL = process.env.VUE_APP_API_BASE;
 
 export default {
   components: { Editor, TestRun },
   setup() {
+    const router = useRouter();
     const route = useRoute();
     const bug = ref(null);
     const video = ref(null);
@@ -51,10 +58,24 @@ export default {
         video.value = `${BASE_URL}/videos/${bug.value._id}/${bug.value.testResults?.[0]._id}/run.mp4`;
       });
 
+    const deleteBug = async () => {
+      await deleteBugById(bug.value._id);
+
+      router.push({ name: "Home" });
+    };
+
+    const retestBug = async () => {
+      const results = await retestBugById(bug.value._id);
+
+      console.log(results);
+    }
+
     return {
       bug,
       video,
       activeTab,
+      deleteBug,
+      retestBug
     };
   },
 };

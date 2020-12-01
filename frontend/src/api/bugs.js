@@ -15,7 +15,7 @@ const deleteBugById = async (bugId) => {
 }
 
 const retestBugById = async (bugId) => {
-  return await ky.post(`${BASE_URL}/bugs/${bugId}/test`).json();
+  return await ky.post(`${BASE_URL}/bugs/${bugId}/test`, { timeout: 100000 }).json();
 }
 
 export {

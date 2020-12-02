@@ -8,6 +8,8 @@ I am also using this project as a time to mess around with [Vue 3](https://v3.vu
 - Develop a basic bug reporting system that encourages reproducible bugs and tests so that a develper will know when the bug is solved.
 - Auto capture test videos and screenshots based on the tests.
 - Learn Tailwind CSS and Vue 3 and other new(ish) technologies.
+- Define schema so multiple different test frameworks can be used
+- Plugin system?
 
 ## Project Requirements
 - Node (currently only developed and tested in Node 14)

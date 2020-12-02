@@ -64,6 +64,9 @@ app.post("/bugs", async (req, res) => {
   if (!req.body.preview) {
     const saved = await bug.save();
 
+    // FIXME: Database isnt correclty getting update for screenshots on create new bug
+    util.cleanTestResult(saved.testResults[0], saved._id.toString(), saved.testResults[0]._id.toString());
+
     util.saveTestArtifact(
       results.video,
       "run.mp4",
@@ -71,6 +74,8 @@ app.post("/bugs", async (req, res) => {
       saved._id.toString(),
       saved.testResults[0]._id.toString()
     );
+
+    await saved.save();
 
     return res.json({
       bugId: bug._id
@@ -123,29 +128,18 @@ app.post("/bugs/:id/test", async (req, res) => {
 
     result.testResults.unshift(testResults);
 
-    const saved = await result.save();
+    util.cleanTestResult(result.testResults[0], result._id.toString(), result.testResults[0]._id.toString());
 
     // Save Artifacts
     util.saveTestArtifact(
       testResults.video,
       "run.mp4",
       "video",
-      saved._id.toString(),
-      saved.testResults[0]._id.toString()
+      result._id.toString(),
+      result.testResults[0]._id.toString()
     );
 
-    // TODO: Currenlty gets all screenshots. Need to save and decide how to store in database
-    const screenshots = testResults.tests.reduce((acc, cur) => {
-      return [
-        ...acc,
-        ...cur.attempts.reduce((acc2, cur2) => {
-          return [
-            ...acc2,
-            ...cur2.screenshots
-          ]
-        }, [])
-      ];
-    }, []);
+    await result.save();
 
     res.json(testResults);
   } else {

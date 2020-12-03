@@ -64,7 +64,6 @@ app.post("/bugs", async (req, res) => {
   if (!req.body.preview) {
     const saved = await bug.save();
 
-    // FIXME: Database isnt correclty getting update for screenshots on create new bug
     util.cleanTestResult(saved.testResults[0], saved._id.toString(), saved.testResults[0]._id.toString());
 
     util.saveTestArtifact(
@@ -75,6 +74,7 @@ app.post("/bugs", async (req, res) => {
       saved.testResults[0]._id.toString()
     );
 
+    saved.markModified('testResults');
     await saved.save();
 
     return res.json({

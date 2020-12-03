@@ -147,6 +147,24 @@ app.post("/bugs/:id/test", async (req, res) => {
   }
 });
 
+app.post("/bugs/:id/comments", async (req, res) => {
+  const validId = mongoose.Types.ObjectId.isValid(req.params.id);
+  const result = validId ? await Bug.findById(req.params.id) : null;
+
+  if (result) {
+    // TODO: Strip stuff from comments probably
+    result.comments.unshift({
+      comment: req.body.comment
+    });
+
+    result.save();
+
+    res.json({ status: "success" })
+  } else {
+    res.status(404).json({ error: "Bug does not exist" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });

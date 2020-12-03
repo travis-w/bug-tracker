@@ -9,12 +9,20 @@ const TestResultSchema = new mongoose.Schema({
   error: Array
 });
 
+const BugCommentSchema = new mongoose.Schema({
+  date: { type: Date, default: Date.now },
+  // TODO: Switch to UserId when Auth gets set up
+  user: { type: String, default: "Anonymous" },
+  comment: String
+});
+
 const BugSchema = new mongoose.Schema({
   name: String,
   date: { type: Date, default: Date.now },
   description: String,
   test: String,
   testResults: [TestResultSchema],
+  comments: [BugCommentSchema],
   status: {
     type: String,
     default: "Open",

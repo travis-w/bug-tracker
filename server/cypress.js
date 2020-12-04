@@ -12,34 +12,35 @@ const runCypress = (testContent) => {
 
     fs.writeFileSync(filePath, testContent);
 
-    cypress.run({
-      spec: `./cypress/integration/${fileName}`,
-      config: {
-        baseUrl: 'https://facebook.com',
-        video: true,
-      },
-      quiet: true
-    })
-    .then((results) => {
-      const run = results.runs[0];
-
-      resolve({
-        passed: results.totalFailed === 0,
-        tests: run.tests,
-        video: run.video,
-        stats: results.stats,
-        error: run.error
+    cypress
+      .run({
+        spec: `./cypress/integration/${fileName}`,
+        config: {
+          baseUrl: "https://facebook.com",
+          video: true,
+        },
+        quiet: true,
       })
-    })
-    .catch((err) => {
-      reject(err)
-    })
-    .finally(() => {
-      fs.unlinkSync(filePath);
-    });
-  })
-}
+      .then((results) => {
+        const run = results.runs[0];
+
+        resolve({
+          passed: results.totalFailed === 0,
+          tests: run.tests,
+          video: run.video,
+          stats: results.stats,
+          error: run.error,
+        });
+      })
+      .catch((err) => {
+        reject(err);
+      })
+      .finally(() => {
+        fs.unlinkSync(filePath);
+      });
+  });
+};
 
 module.exports = {
-  runCypress
-}
+  runCypress,
+};

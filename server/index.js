@@ -17,12 +17,12 @@ const ARTIFACT_LOCATION = "./test_artifacts";
 var mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/BugTracker", {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
 
 app.use(cors());
 app.use(express.json());
-app.set('json spaces', 2);
+app.set("json spaces", 2);
 
 app.use("/videos", express.static("test_artifacts"));
 
@@ -31,8 +31,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/bugs", async (req, res) => {
-  res.json(await Bug.find({}, ["_id", "name", "status", "date"], {sort: '-date'}));
-})
+  res.json(
+    await Bug.find({}, ["_id", "name", "status", "date"], { sort: "-date" })
+  );
+});
 
 app.post("/bugs", async (req, res) => {
   const results = await runCypress(req.body.test);
@@ -40,14 +42,14 @@ app.post("/bugs", async (req, res) => {
   // Error with test run
   if (results.error) {
     return res.status(400).json({
-      error: results.error
+      error: results.error,
     });
   }
 
   // Don't save  bug if test passes (submit only)
-  if(results.passed && !req.body.preview) {
+  if (results.passed && !req.body.preview) {
     return res.status(400).json({
-      error: "Test passed. Invalid bug" 
+      error: "Test passed. Invalid bug",
     });
   }
 
@@ -58,13 +60,17 @@ app.post("/bugs", async (req, res) => {
     name: req.body.name,
     description: req.body.description,
     test: req.body.test,
-    testResults: [results]
+    testResults: [results],
   });
 
   if (!req.body.preview) {
     const saved = await bug.save();
 
-    util.cleanTestResult(saved.testResults[0], saved._id.toString(), saved.testResults[0]._id.toString());
+    util.cleanTestResult(
+      saved.testResults[0],
+      saved._id.toString(),
+      saved.testResults[0]._id.toString()
+    );
 
     util.saveTestArtifact(
       results.video,
@@ -74,11 +80,11 @@ app.post("/bugs", async (req, res) => {
       saved.testResults[0]._id.toString()
     );
 
-    saved.markModified('testResults');
+    saved.markModified("testResults");
     await saved.save();
 
     return res.json({
-      bugId: bug._id
+      bugId: bug._id,
     });
   }
 
@@ -86,14 +92,14 @@ app.post("/bugs", async (req, res) => {
   fs.renameSync(results.video, path.join(VIDEO_LOCATION, videoName));
 
   res.json({
-    video: `/videos/${videoName}`
+    video: `/videos/${videoName}`,
   });
 });
 
 app.get("/bugs/:id", async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   const result = validId ? await Bug.findById(req.params.id) : null;
-  
+
   if (result) {
     res.json(result);
   } else {
@@ -103,7 +109,9 @@ app.get("/bugs/:id", async (req, res) => {
 
 app.delete("/bugs/:id", async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
-  const result = validId ? await Bug.findOneAndDelete({ _id: req.params.id }) : null;
+  const result = validId
+    ? await Bug.findOneAndDelete({ _id: req.params.id })
+    : null;
 
   if (result) {
     const artifacts = path.join(ARTIFACT_LOCATION, result._id.toString());
@@ -128,7 +136,11 @@ app.post("/bugs/:id/test", async (req, res) => {
 
     result.testResults.unshift(testResults);
 
-    util.cleanTestResult(result.testResults[0], result._id.toString(), result.testResults[0]._id.toString());
+    util.cleanTestResult(
+      result.testResults[0],
+      result._id.toString(),
+      result.testResults[0]._id.toString()
+    );
 
     // Save Artifacts
     util.saveTestArtifact(
@@ -154,12 +166,12 @@ app.post("/bugs/:id/comments", async (req, res) => {
   if (result) {
     // TODO: Strip stuff from comments probably
     result.comments.unshift({
-      comment: req.body.comment
+      comment: req.body.comment,
     });
 
     result.save();
 
-    res.json({ status: "success" })
+    res.json({ status: "success" });
   } else {
     res.status(404).json({ error: "Bug does not exist" });
   }

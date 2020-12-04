@@ -28,20 +28,26 @@ const cleanTestResult = (testResults, bugId, testId) => {
     test.attempts.map((attempt) => {
       // Clean (and save screenshots)
       attempt.screenshots = attempt.screenshots.map((screenshot) => {
-        saveTestArtifact(screenshot.path, `${++numScreenshots}.png`, "screenshot", bugId, testId);
+        saveTestArtifact(
+          screenshot.path,
+          `${++numScreenshots}.png`,
+          "screenshot",
+          bugId,
+          testId
+        );
 
         return {
           takenAt: screenshot.takenAt,
           fileName: `${numScreenshots}.png`,
           height: screenshot.height,
-          width: screenshot.width
-        }
-      })
-    })
+          width: screenshot.width,
+        };
+      });
+    });
   });
-}
+};
 
 module.exports = {
   saveTestArtifact,
-  cleanTestResult
-}
+  cleanTestResult,
+};

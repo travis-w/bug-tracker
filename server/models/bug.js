@@ -6,14 +6,14 @@ const TestResultSchema = new mongoose.Schema({
   // TODO: Define tests schema beyond `Array`
   tests: Array,
   video: Array,
-  error: Array
+  error: Array,
 });
 
 const BugCommentSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   // TODO: Switch to UserId when Auth gets set up
   user: { type: String, default: "Anonymous" },
-  comment: String
+  comment: String,
 });
 
 const BugSchema = new mongoose.Schema({
@@ -26,12 +26,12 @@ const BugSchema = new mongoose.Schema({
   status: {
     type: String,
     default: "Open",
-    enum: ["Open", "Closed"]
-  }
+    enum: ["Open", "Closed"],
+  },
 });
 
-const Bug = mongoose.model('Bug', BugSchema);
+const Bug = mongoose.model("Bug", BugSchema);
 
 module.exports = {
-  Bug: Bug
-}
+  Bug: Bug,
+};

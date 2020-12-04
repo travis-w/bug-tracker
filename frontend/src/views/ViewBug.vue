@@ -7,8 +7,9 @@
       <div class="tab__buttons">
         <button @click="activeTab = 0">Info</button>
         <button @click="activeTab = 1">Test History</button>
-        <button @click="activeTab = 2">Test Source</button>
-        <button @click="activeTab = 3">Other</button>
+        <button @click="activeTab = 2">Discussion</button>
+        <button @click="activeTab = 3">Test Source</button>
+        <button @click="activeTab = 4">Other</button>
       </div>
       <div class="tab__content">
         <div v-if="activeTab === 0">Info Tab</div>
@@ -20,9 +21,23 @@
           />
         </div>
         <div v-else-if="activeTab === 2">
-          <Editor class="h-52" v-model="bug.test" :read-only="true" />
+          <ol>
+            <li v-for="comment in bug.comments" :key="comment._id">
+              {{ comment.comment }}
+            </li>
+          </ol>
+          <textarea v-model="comment" />
+          <button
+            class="bg-blue-600 p-2 rounded-md text-white mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="sendComment"
+          >
+            Comment
+          </button>
         </div>
         <div v-else-if="activeTab === 3">
+          <Editor class="h-52" v-model="bug.test" :read-only="true" />
+        </div>
+        <div v-else-if="activeTab === 4">
           <!-- Trash tab to throw stuff in now for functionality -->
           <button @click="deleteBug">Delete</button>
           <button @click="retestBug">Retest</button>
@@ -38,7 +53,12 @@ import { useRoute, useRouter } from "vue-router";
 
 import Editor from "@/components/Editor";
 import TestRun from "@/components/TestRun";
-import { getBugById, deleteBugById, retestBugById } from "@/api/bugs";
+import {
+  getBugById,
+  deleteBugById,
+  retestBugById,
+  commentBugById,
+} from "@/api/bugs";
 
 const BASE_URL = process.env.VUE_APP_API_BASE;
 
@@ -50,6 +70,7 @@ export default {
     const bug = ref(null);
     const video = ref(null);
     const activeTab = ref(0);
+    const comment = ref("");
 
     // TODO: Look into asyc setup/vue suspense
     getBugById(route.params.bugId).then((res) => {
@@ -69,12 +90,25 @@ export default {
       console.log(results);
     };
 
+    const sendComment = async () => {
+      await commentBugById(bug.value._id, comment.value);
+
+      bug.value = {
+        ...bug.value,
+        comments: [...bug.value.comments, { comment: comment.value }],
+      };
+
+      comment.value = "";
+    };
+
     return {
       bug,
       video,
       activeTab,
       deleteBug,
       retestBug,
+      comment,
+      sendComment,
     };
   },
 };

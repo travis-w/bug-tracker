@@ -20,4 +20,14 @@ const retestBugById = async (bugId) => {
     .json();
 };
 
-export { getAllBugs, getBugById, deleteBugById, retestBugById };
+const commentBugById = async (bugId, comment) => {
+  return await ky
+    .post(`${BASE_URL}/bugs/${bugId}/comments`, {
+      json: {
+        comment,
+      },
+    })
+    .json();
+};
+
+export { getAllBugs, getBugById, deleteBugById, retestBugById, commentBugById };

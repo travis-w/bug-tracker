@@ -197,10 +197,10 @@ app.post("/bugs/:id/comments", passport.authenticate('basic', { session: false }
 // Register and Login
 app.post("/register", async (req, res) => {
   // TODO: Validation
-  const userExists = await User.find({ email: req.body.email });
+  const userExists = await User.findOne({ email: req.body.email });
 
   if (userExists) {
-    res.status(409).json({ status: "error", message: "User with email already exists" });
+    return res.status(409).json({ status: "error", message: "User with email already exists" });
   }
 
   const user = new User({

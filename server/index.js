@@ -2,9 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
+const passport = require("passport");
+const { BasicStrategy } = require("passport-http");
 
 const util = require("./util");
 const { Bug } = require("./models/bug");
+const { User } = require("./models/user");
 const { runCypress } = require("./cypress");
 
 const app = express();
@@ -13,6 +16,11 @@ const port = 8081;
 const VIDEO_LOCATION = "./videos";
 const ARTIFACT_LOCATION = "./test_artifacts";
 
+app.use(cors());
+app.use(express.json());
+app.set("json spaces", 2);
+app.use(passport.initialize());
+
 // Setup Mongo
 var mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/BugTracker", {
@@ -20,13 +28,22 @@ mongoose.connect("mongodb://localhost/BugTracker", {
   useUnifiedTopology: true,
 });
 
-app.use(cors());
-app.use(express.json());
-app.set("json spaces", 2);
+// Setup Passport
+passport.use(new BasicStrategy(async (email, password, done) => {
+  const user = await User.findOne({ email: email });
+
+  if (!user) { return done(null, false) };
+  if (util.createHash(`${email}${password}`) !== user.password) {
+    return done(null, false);
+  }
+
+  return done(null, user);
+}));
+
 
 app.use("/videos", express.static("test_artifacts"));
 
-app.get("/", (req, res) => {
+app.get("/", passport.authenticate('basic', { session: false }), (req, res) => {
   res.send("Hello World!");
 });
 
@@ -36,7 +53,7 @@ app.get("/bugs", async (req, res) => {
   );
 });
 
-app.post("/bugs", async (req, res) => {
+app.post("/bugs", passport.authenticate('basic', { session: false }), async (req, res) => {
   const results = await runCypress(req.body.test);
 
   // Error with test run
@@ -107,7 +124,7 @@ app.get("/bugs/:id", async (req, res) => {
   }
 });
 
-app.delete("/bugs/:id", async (req, res) => {
+app.delete("/bugs/:id", passport.authenticate('basic', { session: false }), async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   const result = validId
     ? await Bug.findOneAndDelete({ _id: req.params.id })
@@ -126,7 +143,7 @@ app.delete("/bugs/:id", async (req, res) => {
   }
 });
 
-app.post("/bugs/:id/test", async (req, res) => {
+app.post("/bugs/:id/test", passport.authenticate('basic', { session: false }), async (req, res) => {
   // Re-run test
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   const result = validId ? await Bug.findById(req.params.id) : null;
@@ -159,7 +176,7 @@ app.post("/bugs/:id/test", async (req, res) => {
   }
 });
 
-app.post("/bugs/:id/comments", async (req, res) => {
+app.post("/bugs/:id/comments", passport.authenticate('basic', { session: false }), async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   const result = validId ? await Bug.findById(req.params.id) : null;
 
@@ -175,6 +192,36 @@ app.post("/bugs/:id/comments", async (req, res) => {
   } else {
     res.status(404).json({ error: "Bug does not exist" });
   }
+});
+
+// Register and Login
+app.post("/register", async (req, res) => {
+  // TODO: Validation
+  const userExists = await User.find({ email: req.body.email });
+
+  if (userExists) {
+    res.status(409).json({ status: "error", message: "User with email already exists" });
+  }
+
+  const user = new User({
+    email: req.body.email,
+    password: util.createHash(`${req.body.email}${req.body.password}`),
+  });
+
+  let result = await user.save();
+
+  res.json({
+    status: "success",
+    message: "User created successfully",
+    data: user
+  });
+});
+
+app.post("/login", passport.authenticate('basic', { session: false }), async(req, res) => {
+  res.json({
+    status: "success",
+    data: req.user
+  })
 });
 
 app.listen(port, () => {

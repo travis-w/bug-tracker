@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const ARTIFACT_LOCATION = "./test_artifacts";
 
@@ -47,7 +48,12 @@ const cleanTestResult = (testResults, bugId, testId) => {
   });
 };
 
+const createHash = (string) => {
+  return crypto.createHash("sha256").update(string).digest("hex");
+};
+
 module.exports = {
   saveTestArtifact,
   cleanTestResult,
+  createHash,
 };

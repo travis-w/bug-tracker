@@ -3,7 +3,8 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const passport = require("passport");
-const { BasicStrategy } = require("passport-http");
+const jwt = require("jsonwebtoken");
+const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 
 const util = require("./util");
 const { Bug } = require("./models/bug");
@@ -15,6 +16,7 @@ const port = 8081;
 
 const VIDEO_LOCATION = "./videos";
 const ARTIFACT_LOCATION = "./test_artifacts";
+const JWT_SECRET = "JWTSECRET";
 
 app.use(cors());
 app.use(express.json());
@@ -28,12 +30,16 @@ mongoose.connect("mongodb://localhost/BugTracker", {
   useUnifiedTopology: true,
 });
 
-// Setup Passport
-passport.use(new BasicStrategy(async (email, password, done) => {
-  const user = await User.findOne({ email: email });
+const passportJwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: JWT_SECRET
+};
 
-  if (!user) { return done(null, false) };
-  if (util.createHash(`${email}${password}`) !== user.password) {
+// Setup Passport
+passport.use(new JwtStrategy(passportJwtOptions, async (jwt_payload, done) => {
+  const user = User.findOne({ user: jwt_payload.email });
+
+  if (!user) {
     return done(null, false);
   }
 
@@ -43,7 +49,7 @@ passport.use(new BasicStrategy(async (email, password, done) => {
 
 app.use("/videos", express.static("test_artifacts"));
 
-app.get("/", passport.authenticate('basic', { session: false }), (req, res) => {
+app.get("/", passport.authenticate("jwt", { session: false }), (req, res) => {
   res.send("Hello World!");
 });
 
@@ -53,7 +59,7 @@ app.get("/bugs", async (req, res) => {
   );
 });
 
-app.post("/bugs", passport.authenticate('basic', { session: false }), async (req, res) => {
+app.post("/bugs", passport.authenticate("jwt", { session: false }), async (req, res) => {
   const results = await runCypress(req.body.test);
 
   // Error with test run
@@ -124,7 +130,7 @@ app.get("/bugs/:id", async (req, res) => {
   }
 });
 
-app.delete("/bugs/:id", passport.authenticate('basic', { session: false }), async (req, res) => {
+app.delete("/bugs/:id", passport.authenticate("jwt", { session: false }), async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   const result = validId
     ? await Bug.findOneAndDelete({ _id: req.params.id })
@@ -143,7 +149,7 @@ app.delete("/bugs/:id", passport.authenticate('basic', { session: false }), asyn
   }
 });
 
-app.post("/bugs/:id/test", passport.authenticate('basic', { session: false }), async (req, res) => {
+app.post("/bugs/:id/test", passport.authenticate("jwt", { session: false }), async (req, res) => {
   // Re-run test
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   const result = validId ? await Bug.findById(req.params.id) : null;
@@ -176,7 +182,7 @@ app.post("/bugs/:id/test", passport.authenticate('basic', { session: false }), a
   }
 });
 
-app.post("/bugs/:id/comments", passport.authenticate('basic', { session: false }), async (req, res) => {
+app.post("/bugs/:id/comments", passport.authenticate("jwt", { session: false }), async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
   const result = validId ? await Bug.findById(req.params.id) : null;
 
@@ -217,11 +223,28 @@ app.post("/register", async (req, res) => {
   });
 });
 
-app.post("/login", passport.authenticate('basic', { session: false }), async(req, res) => {
+app.post("/login", async(req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user || util.createHash(`${email}${password}`) !== user.password) {
+    return res.sendStatus(401)
+  }
+
+  // TODO: Mess with settings 
+  const payload = { user: user.email };
+  const options = { expiresIn: '2d' };
+  
+  const token = jwt.sign(payload, JWT_SECRET, options);
+
   res.json({
     status: "success",
-    data: req.user
-  })
+    data: {
+      token,
+      user
+    }
+  });
 });
 
 app.listen(port, () => {

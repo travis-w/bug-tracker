@@ -1,8 +1,8 @@
 <template>
   <div class="login">
-    <input type="text" placeholder="User Name" v-model="email"/>
-    <input type="password" placeholder="Password" v-model="password"/>
-    <button 
+    <input type="text" placeholder="User Name" v-model="email" />
+    <input type="password" placeholder="Password" v-model="password" />
+    <button
       class="bg-blue-600 p-2 rounded-md text-white mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
       @click="onLogin"
     >
@@ -14,29 +14,24 @@
 <script>
 import { ref } from "vue";
 
-import { login } from "@/api/users";
-
 export default {
-  setup() {
+  setup(props, { root }) {
     const email = ref("");
     const password = ref("");
 
     const onLogin = async () => {
-      // TODO: Save auth token and persist across other calls
-      const user = await login(email.value, password.value);
+      const success = root.$store.dispatch("login", { email, password });
 
-      console.log(user);
-    }
+      console.log(success);
+    };
 
     return {
       email,
       password,
-      onLogin
-    }
-  }
-}
+      onLogin,
+    };
+  },
+};
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

@@ -1,12 +1,14 @@
 <template>
   <div class="register">
-    <input type="text" placeholder="User Name" v-model="email"/>
-    <input type="password" placeholder="Password" v-model="password"/>
-    <input type="password" placeholder="Password" v-model="confirmPassword"/>
-    <button 
+    <input type="text" placeholder="User Name" v-model="email" />
+    <input type="password" placeholder="Password" v-model="password" />
+    <input type="password" placeholder="Password" v-model="confirmPassword" />
+    <button
       class="bg-blue-600 p-2 rounded-md text-white mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
       @click="onRegister"
-      :disabled="email === '' || password === '' || confirmPassword !== password"
+      :disabled="
+        email === '' || password === '' || confirmPassword !== password
+      "
     >
       Register
     </button>
@@ -16,8 +18,6 @@
 <script>
 import { ref } from "vue";
 
-import { register } from "@/api/users";
-
 export default {
   setup() {
     const email = ref("");
@@ -26,19 +26,18 @@ export default {
 
     const onRegister = async () => {
       // TODO: Save auth token and persist across other calls
-      const user = await register(email.value, password.value);
-    }
+      // const user = await register(email.value, password.value);
+      console.log("TESTING");
+    };
 
     return {
       email,
       password,
       confirmPassword,
-      onRegister
-    }
-  }
-}
+      onRegister,
+    };
+  },
+};
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

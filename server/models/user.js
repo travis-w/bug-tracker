@@ -11,11 +11,11 @@ const UserSchema = new mongoose.Schema({
   role: { type: Number, default: 0 },
 });
 
-UserSchema.set('toJSON', {
-  transform: function(doc, ret, options) {
+UserSchema.set("toJSON", {
+  transform: function (doc, ret, options) {
     delete ret.password;
     return ret;
-  }
+  },
 });
 
 const User = mongoose.model("User", UserSchema);

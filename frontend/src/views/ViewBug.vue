@@ -48,68 +48,40 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { mapGetters, mapActions } from "vuex";
 
 import Editor from "@/components/Editor";
 import TestRun from "@/components/TestRun";
-import {
-  getBugById,
-  deleteBugById,
-  retestBugById,
-  commentBugById,
-} from "@/api/bugs";
 
 const BASE_URL = process.env.VUE_APP_API_BASE;
 
 export default {
   components: { Editor, TestRun },
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const bug = ref(null);
-    const video = ref(null);
-    const activeTab = ref(0);
-    const comment = ref("");
-
-    // TODO: Look into asyc setup/vue suspense
-    getBugById(route.params.bugId).then((res) => {
-      bug.value = { ...res };
-      video.value = `${BASE_URL}/videos/${bug.value._id}/${bug.value.testResults?.[0]._id}/run.mp4`;
-    });
-
-    const deleteBug = async () => {
-      await deleteBugById(bug.value._id);
-
-      router.push({ name: "Home" });
-    };
-
-    const retestBug = async () => {
-      const results = await retestBugById(bug.value._id);
-
-      console.log(results);
-    };
-
-    const sendComment = async () => {
-      await commentBugById(bug.value._id, comment.value);
-
-      bug.value = {
-        ...bug.value,
-        comments: [...bug.value.comments, { comment: comment.value }],
-      };
-
-      comment.value = "";
-    };
-
+  data() {
     return {
-      bug,
-      video,
-      activeTab,
-      deleteBug,
-      retestBug,
-      comment,
-      sendComment,
+      activeTab: 0,
+      comment: "",
     };
+  },
+  computed: {
+    ...mapGetters({
+      getBugById: "GET_BUG_BY_ID",
+    }),
+    bug() {
+      return this.getBugById(this.$route.params.bugId);
+    },
+    video() {
+      return `${BASE_URL}/videos/${this.bug._id}/${this.bug.testResults?.[0]._id}/run.mp4`;
+    },
+  },
+  methods: {
+    ...mapActions(["loadBugById"]),
+    deleteBug() {},
+    retestBug() {},
+    sendComment() {},
+  },
+  async created() {
+    await this.loadBugById(this.$route.params.bugId);
   },
 };
 </script>

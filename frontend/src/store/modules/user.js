@@ -44,6 +44,24 @@ const actions = {
       return false;
     }
   },
+
+  async register(_, { email, password }) {
+    try {
+      let user = await ky
+        .post(`${BASE_URL}/register`, {
+          json: {
+            email,
+            password,
+          },
+        })
+        .json();
+
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
 };
 
 export default {

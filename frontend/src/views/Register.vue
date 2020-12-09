@@ -16,26 +16,28 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { mapActions } from "vuex";
 
 export default {
-  setup() {
-    const email = ref("");
-    const password = ref("");
-    const confirmPassword = ref("");
-
-    const onRegister = async () => {
-      // TODO: Save auth token and persist across other calls
-      // const user = await register(email.value, password.value);
-      console.log("TESTING");
-    };
-
+  data() {
     return {
-      email,
-      password,
-      confirmPassword,
-      onRegister,
+      email: "",
+      password: "",
+      confirmPassword: "",
     };
+  },
+  methods: {
+    ...mapActions(["register"]),
+    async onRegister() {
+      const success = await this.register({
+        email: this.email,
+        password: this.password,
+      });
+
+      if (success) {
+        this.$router.push({ name: "Login" });
+      }
+    },
   },
 };
 </script>

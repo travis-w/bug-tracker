@@ -37,6 +37,8 @@ const actions = {
 
       commit(types.SET_USER, data.data.user);
       commit(types.SET_TOKEN, data.data.token);
+
+      return true;
     } catch (e) {
       console.error(e);
       return false;

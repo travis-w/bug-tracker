@@ -12,24 +12,28 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { mapActions } from "vuex";
 
 export default {
-  setup(props, { root }) {
-    const email = ref("");
-    const password = ref("");
-
-    const onLogin = async () => {
-      const success = root.$store.dispatch("login", { email, password });
-
-      console.log(success);
-    };
-
+  data() {
     return {
-      email,
-      password,
-      onLogin,
+      email: "",
+      password: "",
     };
+  },
+  methods: {
+    ...mapActions(["login"]),
+    async onLogin() {
+      const success = await this.login({
+        email: this.email,
+        password: this.password,
+      });
+
+      if (success) {
+        console.log("REDIRECT");
+        this.$router.push({ name: "Home" });
+      }
+    },
   },
 };
 </script>

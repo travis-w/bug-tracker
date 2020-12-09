@@ -16,29 +16,19 @@
 </template>
 
 <script>
-import { ref } from "vue";
-
-import { getAllBugs } from "@/api/bugs";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
-  setup() {
-    const bugs = ref([]);
-
-    const setBugs = (val) => {
-      bugs.value = [...val];
-    };
-
-    return {
-      bugs,
-      setBugs,
-    };
+  computed: {
+    ...mapGetters({
+      bugs: "GET_BUGS",
+    }),
   },
-  beforeRouteEnter: async (to, from, next) => {
-    const results = await getAllBugs();
-
-    next((vm) => {
-      vm.setBugs(results);
-    });
+  methods: {
+    ...mapActions(["getAllBugs"]),
+  },
+  mounted() {
+    this.getAllBugs();
   },
 };
 </script>

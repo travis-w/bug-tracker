@@ -22,7 +22,7 @@ const mutations = {
   [types.UPDATE_BUG_OR_INSERT](state, bug) {
     const index = state.bugs.findIndex((x) => x._id === bug._id);
 
-    if (index) {
+    if (index !== -1) {
       state.bugs.splice(index, 1, {
         ...bug,
       });

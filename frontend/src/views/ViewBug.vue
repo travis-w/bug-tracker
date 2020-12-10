@@ -75,10 +75,33 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["loadBugById"]),
-    deleteBug() {},
-    retestBug() {},
-    sendComment() {},
+    ...mapActions([
+      "loadBugById",
+      "deleteBugById",
+      "retestBugById",
+      "commentBugById",
+    ]),
+    async deleteBug() {
+      const success = await this.deleteBugById(this.bug._id);
+
+      if (success) {
+        this.$router.push({ name: "Home" });
+      }
+    },
+    async retestBug() {
+      // Loader
+      const success = await this.retestBugById(this.bug._id);
+    },
+    async sendComment() {
+      const success = await this.commentBugById({
+        bugId: this.bug._id,
+        comment: this.comment,
+      });
+
+      if (success) {
+        this.comment = "";
+      }
+    },
   },
   async created() {
     await this.loadBugById(this.$route.params.bugId);

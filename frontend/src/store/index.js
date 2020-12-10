@@ -7,7 +7,7 @@ import BugsModule from "@/store/modules/bugs";
 // Vuex Perist Setup
 const vuexPlugin = new VuexPersistence({
   storage: window.sessionStorage,
-  reducer: (state) => state.user,
+  modules: ["user"],
 });
 
 export default createStore({

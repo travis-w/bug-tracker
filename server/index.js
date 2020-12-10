@@ -186,9 +186,9 @@ app.post(
         result.testResults[0]._id.toString()
       );
 
-      await result.save();
+      const savedResults = await result.save();
 
-      res.json(testResults);
+      res.json(savedResults.testResults[0]);
     } else {
       res.status(404).json({ error: "No results found" });
     }
@@ -208,9 +208,9 @@ app.post(
         comment: req.body.comment,
       });
 
-      result.save();
+      const saved = await result.save();
 
-      res.json({ status: "success" });
+      res.json({ status: "success", data: saved.comments[0] });
     } else {
       res.status(404).json({ error: "Bug does not exist" });
     }

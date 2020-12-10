@@ -33,6 +33,39 @@ const mutations = {
     // Insert if doesnt exit
     state.bugs.push(bug);
   },
+
+  [types.REMOVE_BUG](state, bugId) {
+    const index = state.bugs.findIndex((x) => x._id === bugId);
+
+    if (index !== -1) {
+      state.bugs.splice(index, 1);
+      return;
+    }
+  },
+
+  [types.ADD_TEST_TO_BUG](state, { bugId, test }) {
+    const index = state.bugs.findIndex((x) => x._id === bugId);
+    const bug = state.bugs[index];
+
+    if (index !== -1) {
+      state.bugs.splice(index, 1, {
+        ...bug,
+        testResults: [{ ...test }, ...bug.testResults],
+      });
+    }
+  },
+
+  [types.ADD_COMMENT_TO_BUG](state, { bugId, comment }) {
+    const index = state.bugs.findIndex((x) => x._id === bugId);
+    const bug = state.bugs[index];
+
+    if (index !== -1) {
+      state.bugs.splice(index, 1, {
+        ...bug,
+        comments: [{ ...comment }, ...bug.comments],
+      });
+    }
+  },
 };
 
 const actions = {
@@ -52,6 +85,68 @@ const actions = {
       const bug = await ky.get(`${BASE_URL}/bugs/${id}`).json();
 
       commit(types.UPDATE_BUG_OR_INSERT, bug);
+
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+
+  async deleteBugById({ commit, rootState }, id) {
+    try {
+      await ky
+        .delete(`${BASE_URL}/bugs/${id}`, {
+          headers: {
+            Authorization: `Bearer ${rootState.user.token}`,
+          },
+        })
+        .json();
+
+      commit(types.REMOVE_BUG, id);
+
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+
+  async retestBugById({ commit, rootState }, id) {
+    try {
+      let results = await ky
+        .post(`${BASE_URL}/bugs/${id}/test`, {
+          timeout: 100000,
+          headers: {
+            Authorization: `Bearer ${rootState.user.token}`,
+          },
+        })
+        .json();
+
+      // Update results in store
+      commit(types.ADD_TEST_TO_BUG, { bugId: id, test: results });
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+
+  async commentBugById({ commit, rootState }, { bugId, comment }) {
+    try {
+      let results = await ky
+        .post(`${BASE_URL}/bugs/${bugId}/comments`, {
+          headers: {
+            Authorization: `Bearer ${rootState.user.token}`,
+          },
+          json: {
+            comment,
+          },
+        })
+        .json();
+
+      // Push comment here
+      console.log(bugId, results.data);
+      commit(types.ADD_COMMENT_TO_BUG, { bugId, comment: results.data });
 
       return true;
     } catch (e) {

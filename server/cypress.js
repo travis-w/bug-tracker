@@ -6,7 +6,7 @@ const cypress = require("cypress");
 const TEST_LOCATION = "./cypress/integration";
 
 const runCypress = (testContent) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const fileName = `temp_${+new Date()}.spec.js`;
     const filePath = path.join(TEST_LOCATION, fileName);
 

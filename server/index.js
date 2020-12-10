@@ -238,7 +238,7 @@ app.post("/register", async (req, res) => {
   res.json({
     status: "success",
     message: "User created successfully",
-    data: user,
+    data: result,
   });
 });
 

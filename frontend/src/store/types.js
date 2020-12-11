@@ -1,5 +1,8 @@
 export const SET_TOKEN = "SET_TOKEN";
 export const SET_USER = "SET_USER";
+export const GET_USER = "GET_USER";
+export const IS_LOGGED = "IS_LOGGED";
+export const LOG_OUT = "LOG_OUT";
 
 export const SET_BUGS = "SET_BUGS";
 export const GET_BUGS = "GET_BUGS";

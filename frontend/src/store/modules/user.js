@@ -9,7 +9,10 @@ const initialState = {
   userData: null,
 };
 
-const getters = {};
+const getters = {
+  [types.GET_USER]: (state) => state.userData,
+  [types.IS_LOGGED]: (state) => state.token !== null,
+};
 
 const mutations = {
   [types.SET_TOKEN](state, token) {
@@ -20,6 +23,11 @@ const mutations = {
     state.userData = {
       ...user,
     };
+  },
+
+  [types.LOG_OUT](state) {
+    state.token = null;
+    state.userData = null;
   },
 };
 

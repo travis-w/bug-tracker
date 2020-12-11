@@ -154,6 +154,27 @@ const actions = {
       return false;
     }
   },
+
+  async createNewBug({ commit, rootState }, bug) {
+    try {
+      let result = await ky
+        .post(`${BASE_URL}/bugs`, {
+          headers: {
+            Authorization: `Bearer ${rootState.user.token}`,
+          },
+          json: {
+            ...bug,
+          },
+          timeout: 60000,
+        })
+        .json();
+
+      return result;
+    } catch(e) {
+      console.error(e);
+      return false;
+    }
+  }
 };
 
 export default {

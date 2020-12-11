@@ -31,8 +31,7 @@
 </template>
 
 <script lang="ts">
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { mapActions } from "vuex";
 import ky from "ky";
 
 import Editor from "@/components/Editor";
@@ -41,76 +40,64 @@ const BASE_URL = process.env.VUE_APP_API_BASE;
 
 export default {
   components: { Editor },
-  setup() {
-    const name = ref("");
-    const description = ref("");
-    const test = ref("");
-    const loading = ref(false);
-    const previewLoading = ref(false);
-    const video = ref("");
-    const router = useRouter();
-
-    const submitDisabled = computed(
-      () => name.value === "" || description.value === "" || test.value === ""
-    );
-
-    const previewDisabled = computed(() => test.value === "");
-
-    const apiCall = async (preview = false) => {
-      return await ky
-        .post(`${BASE_URL}/bugs`, {
-          json: {
-            name: name.value,
-            description: description.value,
-            test: test.value,
-            preview: preview,
-          },
-          timeout: 60000,
-        })
-        .json();
-    };
-
-    const submitBug = async () => {
-      loading.value = true;
-
-      try {
-        const results = await apiCall();
-
-        // TODO: Delay redirect
-        router.push({ name: "ViewBug", params: { bugId: results.bugId } });
-      } catch (err) {
-        console.log("ERROR HANDLING");
-      }
-
-      loading.value = false;
-    };
-
-    const previewBug = async () => {
-      previewLoading.value = true;
-
-      try {
-        const results = await apiCall(true);
-
-        video.value = BASE_URL + results.video;
-      } catch (err) {
-        console.log("ERROR HANDLING");
-      }
-
-      previewLoading.value = false;
-    };
-
+  data() {
     return {
-      name,
-      description,
-      test,
-      video,
-      loading,
-      submitDisabled,
-      submitBug,
-      previewLoading,
-      previewDisabled,
-      previewBug,
-    };
+      name: "",
+      description: "",
+      test: "",
+      loading: false,
+      previewLoading: false,
+      video: ""
+    }
+  },
+  computed: {
+    submitDisabled() {
+      return this.name === "" || this.description === "" || this.test === "";
+    },
+    previewDisabled() {
+      return this.test === "";
+    }
+  },
+  methods: {
+    ...mapActions(["createNewBug"]),
+    async apiCall(preview = false) {
+      return 
+    },
+
+    async submitBug() {
+      this.loading = true;
+
+      const result = await this.createNewBug({
+        name: this.name,
+        description: this.description,
+        test: this.test,
+        preview: false,
+      });
+
+      // TODO: Delay redirect
+      if (result) {
+        this.$router.push({ name: "ViewBug", params: { bugId: result.bugId } });
+      }
+
+      this.loading = false;
+    },
+
+    async previewBug() {
+      this.previewLoading = true;
+
+      const result = await this.createNewBug({
+        name: this.name,
+        description: this.description,
+        test: this.test,
+        preview: true,
+      });
+
+      if (result) {
+        this.video = BASE_URL + result.video;
+      }
+
+      this.previewLoading = false;
+    }
   },
 };
 </script>

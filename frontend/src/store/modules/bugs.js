@@ -170,11 +170,11 @@ const actions = {
         .json();
 
       return result;
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       return false;
     }
-  }
+  },
 };
 
 export default {

@@ -32,7 +32,6 @@
 
 <script lang="ts">
 import { mapActions } from "vuex";
-import ky from "ky";
 
 import Editor from "@/components/Editor";
 
@@ -47,8 +46,8 @@ export default {
       test: "",
       loading: false,
       previewLoading: false,
-      video: ""
-    }
+      video: "",
+    };
   },
   computed: {
     submitDisabled() {
@@ -56,12 +55,12 @@ export default {
     },
     previewDisabled() {
       return this.test === "";
-    }
+    },
   },
   methods: {
     ...mapActions(["createNewBug"]),
     async apiCall(preview = false) {
-      return 
+      return;
     },
 
     async submitBug() {
@@ -97,7 +96,7 @@ export default {
       }
 
       this.previewLoading = false;
-    }
+    },
   },
 };
 </script>

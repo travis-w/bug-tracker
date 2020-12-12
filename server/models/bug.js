@@ -12,7 +12,10 @@ const TestResultSchema = new mongoose.Schema({
 const BugCommentSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   // TODO: Switch to UserId when Auth gets set up
-  user: { type: String, default: "Anonymous" },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   comment: String,
 });
 

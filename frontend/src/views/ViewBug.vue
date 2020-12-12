@@ -23,6 +23,9 @@
         <div v-else-if="activeTab === 2">
           <ol>
             <li v-for="comment in bug.comments" :key="comment._id">
+              <span class="font-bold"
+                >{{ comment.user?.displayName ?? "Anon" }}:</span
+              >
               {{ comment.comment }}
             </li>
           </ol>

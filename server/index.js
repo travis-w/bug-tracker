@@ -38,7 +38,7 @@ const passportJwtOptions = {
 // Setup Passport
 passport.use(
   new JwtStrategy(passportJwtOptions, async (jwt_payload, done) => {
-    const user = User.findOne({ user: jwt_payload.email });
+    const user = await User.findOne({ user: jwt_payload.email });
 
     if (!user) {
       return done(null, false);
@@ -126,7 +126,9 @@ app.post(
 
 app.get("/bugs/:id", async (req, res) => {
   const validId = mongoose.Types.ObjectId.isValid(req.params.id);
-  const result = validId ? await Bug.findById(req.params.id) : null;
+  const result = validId
+    ? await Bug.findById(req.params.id).populate("comments.user")
+    : null;
 
   if (result) {
     res.json(result);
@@ -206,6 +208,7 @@ app.post(
       // TODO: Strip stuff from comments probably
       result.comments.unshift({
         comment: req.body.comment,
+        user: req.user._id,
       });
 
       const saved = await result.save();

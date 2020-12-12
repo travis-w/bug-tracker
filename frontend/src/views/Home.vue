@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <router-link :to="{ name: 'Create' }">Create New</router-link>
+    <router-link :to="{ name: 'Create' }" class="create-bug">Create New</router-link>
     <BugTable :bugs="bugs" />
   </div>
 </template>
@@ -28,4 +28,8 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.create-bug {
+  @apply px-3 py-2 border-2 border-green-400 rounded-lg text-green-400 float-right;
+}
+</style>

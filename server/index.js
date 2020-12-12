@@ -55,11 +55,11 @@ app.get("/", passport.authenticate("jwt", { session: false }), (req, res) => {
 });
 
 app.get("/bugs", async (req, res) => {
-  res.json(
-    await Bug.find({}, ["_id", "name", "status", "date", "testStatus"], {
-      sort: "-date",
-    })
-  );
+  // TODO: Figure out best way to select testStatus without testResults.
+  //          May require storing testStatus in database
+  const allBugs = await Bug.find({}).sort({ date: -1 });
+
+  res.json(allBugs);
 });
 
 app.post(

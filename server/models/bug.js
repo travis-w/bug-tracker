@@ -37,7 +37,7 @@ const BugSchema = new mongoose.Schema(
   bugSchemaOpts
 );
 
-BugSchema.virtual("testStatus").get(() => {
+BugSchema.virtual("testStatus").get(function () {
   return this.testResults?.[0]?.passed ? "Passing" : "Failing";
 });
 

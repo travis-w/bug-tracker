@@ -1,5 +1,6 @@
 <template>
   <div class="about">
+    <router-link :to="{ name: 'Create' }">Create New</router-link>
     <BugTable :bugs="bugs" />
   </div>
 </template>

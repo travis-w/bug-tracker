@@ -66,6 +66,18 @@ const mutations = {
       });
     }
   },
+
+  [types.UPDATE_BUG_STATUS](state, { bugId, status }) {
+    const index = state.bugs.findIndex((x) => x._id === bugId);
+    const bug = state.bugs[index];
+
+    if (index !== -1) {
+      state.bugs.splice(index, 1, {
+        ...bug,
+        status: status
+      });
+    } 
+  }
 };
 
 const actions = {
@@ -175,6 +187,28 @@ const actions = {
       return false;
     }
   },
+
+  async updateBugStatus({ commit, rootState }, { bugId, status }) {
+    try {
+      let result = await ky
+        .patch(`${BASE_URL}/bugs/${bugId}`, {
+          headers: {
+            Authorization: `Bearer ${rootState.user.token}`,
+          },
+          json: {
+            status,
+          },
+        })
+        .json();
+
+      commit(types.UPDATE_BUG_STATUS, { bugId, status });
+
+      return result;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
 };
 
 export default {

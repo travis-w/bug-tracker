@@ -31,7 +31,7 @@ const BugSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "Open",
-      enum: ["Open", "Closed"],
+      enum: ["Open", "In Progress", "Closed"],
     },
   },
   bugSchemaOpts

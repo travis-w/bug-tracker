@@ -44,6 +44,11 @@
           <!-- Trash tab to throw stuff in now for functionality -->
           <button @click="deleteBug">Delete</button>
           <button @click="retestBug">Retest</button>
+          <select :value="bug.status" @input="updateStatus">
+            <option>Open</option>
+            <option>In Progress</option>
+            <option>Closed</option>
+          </select>
         </div>
       </div>
     </div>
@@ -83,6 +88,7 @@ export default {
       "deleteBugById",
       "retestBugById",
       "commentBugById",
+      "updateBugStatus",
     ]),
     async deleteBug() {
       const success = await this.deleteBugById(this.bug._id);
@@ -105,6 +111,12 @@ export default {
         this.comment = "";
       }
     },
+    async updateStatus(e) {
+      const success = await this.updateBugStatus({
+        bugId: this.bug._id,
+        status: e.target.value,
+      });
+    }
   },
   async created() {
     await this.loadBugById(this.$route.params.bugId);

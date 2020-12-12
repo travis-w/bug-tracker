@@ -52,8 +52,18 @@ const createHash = (string) => {
   return crypto.createHash("sha256").update(string).digest("hex");
 };
 
+const filterObject = (originalObj, allowedFields) => {
+  return Object.keys(originalObj)
+    .filter(key => allowedFields.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = originalObj[key];
+      return obj;
+    }, {})
+};
+
 module.exports = {
   saveTestArtifact,
   cleanTestResult,
   createHash,
+  filterObject,
 };

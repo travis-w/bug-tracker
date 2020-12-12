@@ -19,18 +19,26 @@ const BugCommentSchema = new mongoose.Schema({
   comment: String,
 });
 
-const BugSchema = new mongoose.Schema({
-  name: String,
-  date: { type: Date, default: Date.now },
-  description: String,
-  test: String,
-  testResults: [TestResultSchema],
-  comments: [BugCommentSchema],
-  status: {
-    type: String,
-    default: "Open",
-    enum: ["Open", "Closed"],
+const bugSchemaOpts = { toJSON: { virtuals: true } };
+const BugSchema = new mongoose.Schema(
+  {
+    name: String,
+    date: { type: Date, default: Date.now },
+    description: String,
+    test: String,
+    testResults: [TestResultSchema],
+    comments: [BugCommentSchema],
+    status: {
+      type: String,
+      default: "Open",
+      enum: ["Open", "Closed"],
+    },
   },
+  bugSchemaOpts
+);
+
+BugSchema.virtual("testStatus").get(() => {
+  return this.testResults?.[0]?.passed ? "Passing" : "Failing";
 });
 
 const Bug = mongoose.model("Bug", BugSchema);

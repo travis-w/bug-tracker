@@ -56,7 +56,9 @@ app.get("/", passport.authenticate("jwt", { session: false }), (req, res) => {
 
 app.get("/bugs", async (req, res) => {
   res.json(
-    await Bug.find({}, ["_id", "name", "status", "date"], { sort: "-date" })
+    await Bug.find({}, ["_id", "name", "status", "date", "testStatus"], {
+      sort: "-date",
+    })
   );
 });
 

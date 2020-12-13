@@ -9,7 +9,7 @@
         <button @click="activeTab = 1">Test History</button>
         <button @click="activeTab = 2">Discussion</button>
         <button @click="activeTab = 3">Test Source</button>
-        <button @click="activeTab = 4">Other</button>
+        <button @click="activeTab = 4" v-if="isLogged">Other</button>
       </div>
       <div class="tab__content">
         <div v-if="activeTab === 0">Info Tab</div>
@@ -29,13 +29,15 @@
               {{ comment.comment }}
             </li>
           </ol>
-          <textarea v-model="comment" />
-          <button
-            class="bg-blue-600 p-2 rounded-md text-white mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            @click="sendComment"
-          >
-            Comment
-          </button>
+          <div v-if="isLogged">
+            <textarea v-model="comment" />
+            <button
+              class="bg-blue-600 p-2 rounded-md text-white mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              @click="sendComment"
+            >
+              Comment
+            </button>
+          </div>
         </div>
         <div v-else-if="activeTab === 3">
           <Editor class="h-52" v-model="bug.test" :read-only="true" />
@@ -58,6 +60,8 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 
+import * as types from "@/store/types";
+
 import Editor from "@/components/Editor";
 import TestRun from "@/components/TestRun";
 
@@ -73,7 +77,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getBugById: "GET_BUG_BY_ID",
+      getBugById: types.GET_BUG_BY_ID,
+      isLogged: types.IS_LOGGED,
     }),
     bug() {
       return this.getBugById(this.$route.params.bugId);
@@ -116,7 +121,7 @@ export default {
         bugId: this.bug._id,
         status: e.target.value,
       });
-    }
+    },
   },
   async created() {
     await this.loadBugById(this.$route.params.bugId);

@@ -139,23 +139,30 @@ app.get("/bugs/:id", async (req, res) => {
   }
 });
 
-app.patch("/bugs/:id", passport.authenticate("jwt", { session: false }), async (req, res) => {
-  const validId = mongoose.Types.ObjectId.isValid(req.params.id);
-  const allowUpdate = ["name", "description", "status"];
-  const updateFields = util.filterObject(req.body, allowUpdate);
-  const result = validId
-    ? await Bug.findOneAndUpdate({ _id: req.params.id }, updateFields, { new: true, runValidators: true })
-    : null;
+app.patch(
+  "/bugs/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const validId = mongoose.Types.ObjectId.isValid(req.params.id);
+    const allowUpdate = ["name", "description", "status"];
+    const updateFields = util.filterObject(req.body, allowUpdate);
+    const result = validId
+      ? await Bug.findOneAndUpdate({ _id: req.params.id }, updateFields, {
+          new: true,
+          runValidators: true,
+        })
+      : null;
 
-  if (result) {
-    res.json({
-      status: "succes",
-      data: result
-    })
-  } else {
-    res.status(404).json({ error: "No bug found with id" });
+    if (result) {
+      res.json({
+        status: "succes",
+        data: result,
+      });
+    } else {
+      res.status(404).json({ error: "No bug found with id" });
+    }
   }
-})
+);
 
 app.delete(
   "/bugs/:id",

@@ -54,11 +54,11 @@ const createHash = (string) => {
 
 const filterObject = (originalObj, allowedFields) => {
   return Object.keys(originalObj)
-    .filter(key => allowedFields.includes(key))
+    .filter((key) => allowedFields.includes(key))
     .reduce((obj, key) => {
       obj[key] = originalObj[key];
       return obj;
-    }, {})
+    }, {});
 };
 
 module.exports = {

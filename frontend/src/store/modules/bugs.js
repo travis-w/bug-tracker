@@ -74,10 +74,10 @@ const mutations = {
     if (index !== -1) {
       state.bugs.splice(index, 1, {
         ...bug,
-        status: status
+        status: status,
       });
-    } 
-  }
+    }
+  },
 };
 
 const actions = {
@@ -208,7 +208,7 @@ const actions = {
       console.error(e);
       return false;
     }
-  }
+  },
 };
 
 export default {

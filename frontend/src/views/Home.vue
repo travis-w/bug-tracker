@@ -1,12 +1,16 @@
 <template>
   <div class="about">
-    <router-link :to="{ name: 'Create' }" class="create-bug">Create New</router-link>
+    <router-link v-if="isLogged" :to="{ name: 'Create' }" class="create-bug">
+      Create New
+    </router-link>
     <BugTable :bugs="bugs" />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+
+import * as types from "@/store/types";
 
 import BugTable from "@/components/BugTable";
 
@@ -16,7 +20,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      bugs: "GET_BUGS",
+      bugs: types.GET_BUGS,
+      isLogged: types.IS_LOGGED,
     }),
   },
   methods: {
